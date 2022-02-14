@@ -64,9 +64,24 @@
           rel.value = result
         })
       }
+
+      window.generate = () => {
+        const contract = `Scenario 'ecdh': Create the keypair
+        Given that I am known as 'Authority'
+        When I create the keypair
+        Then print my data`;
+        zencode_exec(contract).then(({result}) => {
+          const rel = document.getElementById('keypar')
+          rel.value = result
+        })
+      }
     </script>
   </head>
   <body>
+     <button onClick="generate()">🔐 Generate keypar</button>
+     <br/>
+     <textarea id="keypar" readonly></textarea>
+     <br/>
      <button onClick="encrypt()">🔐 Generate VC</button>
      <br/>
      <textarea id="encrypted" readonly></textarea>
