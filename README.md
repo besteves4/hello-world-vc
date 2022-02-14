@@ -1,4 +1,4 @@
 # hello-world-vc
 
-npm init
-npm add zenroom
+- install node and npm
+- npm install zenroom

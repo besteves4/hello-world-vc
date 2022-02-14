@@ -7,19 +7,59 @@
     <script type="module">
       import { zencode_exec } from "https://jspm.dev/zenroom@next";
       
-      const conf = "memmanager=lw";
-      
       window.encrypt = () => {
-        const password = document.getElementById('encryptPassword').value
-        const message = document.getElementById('plainMessage').value
-        const keys = JSON.stringify({ password });
-        const data = JSON.stringify({ message });
-        const contract = `Scenario 'ecdh': Encrypt a message with a password/secret 
-          Given that I have a 'string' named 'password' 
-          and that I have a 'string' named 'message' 
-          When I encrypt the secret message 'message' with 'password' 
-          Then print the 'secret message'`;
-        zencode_exec(contract, { data, keys, conf }).then(({result}) => {
+        const keys = JSON.stringify({
+            "Authority": {
+                "keypair": {
+                    "private_key": "cAJT5lppxGQI/bAz2p6H+jyRsUnY5kSmHY4IoiK3xRI=",
+                    "public_key": "BHcH0STBlXMQ/2zURcb0WurK0L1ywRXwDoOH6DISQxa7KOlhmFncb/nW62rV3aLuqbRS8kVTAPnCOi2MRmXpraY="
+                }
+            }
+        });
+        const data = JSON.stringify({
+            "vc": {
+                "@context": [
+                    "https://www.w3.org/2018/credentials/v1",
+                    "https://www.w3.org/2018/credentials/examples/v1"
+                ],
+                "id": "http://example.edu/credentials/1872",
+                "type": [
+                    "VerifiableCredential",
+                    "AlumniCredential"
+                ],
+                "issuer": "https://example.edu/issuers/565049",
+                "issuanceDate": "2010-01-01T19:73:24Z",
+                "credentialSubject": {
+                    "id": "did:example:ebfeb1f712ebc6f1c276e12ec21",
+                    "alumniOf": {
+                        "id": "did:example:c276e12ec21ebfeb1f712ebc6f1",
+                        "name": [
+                            {
+                                "value": "Example University",
+                                "lang": "en"
+                            },
+                            {
+                                "value": "Exemple d'Université",
+                                "lang": "fr"
+                            }
+                        ]
+                    }
+                }
+            },
+            "pubkey_url": "https://dyne.org/verification/keys/1"
+        });
+        console.log(keys)
+        console.log(data)
+        const contract = `Scenario 'w3c': sign JSON
+        Scenario 'ecdh': (required)
+        Given that I am 'Authority'
+        Given I have my 'keypair'
+        Given I have a 'verifiable credential' named 'vc'
+        Given I have a 'string' named 'pubkey url'
+        When I sign the verifiable credential named 'vc'
+        When I set the verification method in 'vc' to 'pubkey url'
+        Then print 'vc' as 'string'`;
+        zencode_exec(contract, { data, keys }).then(({result}) => {
           const rel = document.getElementById('encrypted')
           rel.value = result
         })
@@ -27,10 +67,7 @@
     </script>
   </head>
   <body>
-     <textarea id="plainMessage"></textarea>
-     <br/>
-     <input id="encryptPassword" class="input" type="password" />
-     <button onClick="encrypt()">🔐 Encrypt</button>
+     <button onClick="encrypt()">🔐 Generate VC</button>
      <br/>
      <textarea id="encrypted" readonly></textarea>
   </body>
